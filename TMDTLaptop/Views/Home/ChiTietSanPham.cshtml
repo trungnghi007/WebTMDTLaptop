@@ -1,0 +1,231 @@
+﻿
+@{
+    ViewBag.Title = "ChiTietSanPham";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+@{
+    // Đường dẫn đến thư mục chứa hình ảnh của sản phẩm
+    var imagePath = Server.MapPath($"~/assets/images/product/{Model.MaSanPham}");
+    var imageFiles = new List<string>();
+
+    // Nếu thư mục tồn tại, lấy tất cả các file hình ảnh (jpg, png, gif)
+    if (Directory.Exists(imagePath))
+    {
+        var files = Directory.GetFiles(imagePath, "*.*", SearchOption.TopDirectoryOnly)
+            .Where(file => file.EndsWith(".jpg") || file.EndsWith(".png") || file.EndsWith(".gif")).ToList();
+
+        imageFiles.AddRange(files);
+    }
+}
+<style>
+    .breadcrumb-area {
+        background-image: url('@Url.Content("~/assets/images/banner/banner3.jpg")'); /* Đường dẫn tới hình ảnh */
+    }
+</style>
+<div class="breadcrumb-area">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>Chi tiết sản phẩm</h2>
+            <ul>
+                <li><a href="@Url.Action("Index","Home")">Trang chủ</a></li>
+                <li class="active">Chi tiết sản phẩm</li>
+            </ul>
+        </div>
+    </div>
+</div>
+@if (TempData["Message"] != null)
+{
+    <script>
+        alert('@Html.Raw(TempData["Message"])');
+    </script>
+}
+<!-- Uren's Breadcrumb Area End Here -->
+<!-- Begin Uren's Single Product Variable Area -->
+@model TMDTLaptop.Models.SanPham
+<style>
+    .sp-img_slider .single-slide img {
+        max-width: 100%; /* Đảm bảo hình không vượt quá chiều rộng container */
+        max-height: 500px; /* Đặt chiều cao tối đa để hình không quá lớn */
+        object-fit: contain; /* Giữ tỷ lệ hình ảnh và không bị kéo dãn */
+        width: auto; /* Điều chỉnh tự động theo chiều rộng của container */
+        height: auto; /* Điều chỉnh tự động theo chiều cao của container */
+    }
+</style>
+<div class="sp-area">
+    <div class="container-fluid">
+        <div class="sp-nav">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="sp-img_area">
+                        <div class="sp-img_slider slick-img-slider uren-slick-slider" data-slick-options='{
+                             "slidesToShow": 1,
+                             "arrows": false,
+                             "fade": true,
+                             "draggable": false,
+                             "swipe": true,
+                             "asNavFor": ".sp-img_slider-nav"
+                         }'>
+                            <div class="single-slide">
+                                <img id="mainImage" src="@Url.Content("~/assets/images/product/"+Model.MaSanPham + "/" + Model.HinhAnh)" alt="@Model.TenSanPham">
+                            </div>
+                        </div>
+                        <div class="sp-img_slider-nav slick-slider-nav uren-slick-slider slider-navigation_style-3" data-slick-options='{
+                             "slidesToShow": 3,
+                             "asNavFor": ".sp-img_slider",
+                             "focusOnSelect": true,
+                             "arrows": true,
+                             "spaceBetween": 30
+                         }'>
+                            @foreach (var file in imageFiles)
+                            {
+                                <div class="single-slide">
+                                    <img src="@Url.Content($"~/assets/images/product/{Model.MaSanPham}/" + Path.GetFileName(file))" alt="@Model.TenSanPham"
+                                         class="thumbnail-image"
+                                         data-image="@Url.Content($"~/assets/images/product/{Model.MaSanPham}/" + Path.GetFileName(file))">
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="sp-content">
+                        <div class="sp-heading">
+                            <h5><a href="#">@Model.TenSanPham</a></h5>
+                        </div>
+                        @if (Model.GiaMoi.HasValue)
+                        {
+                            <div class="sp-essential_stuff">
+                                <ul>
+                                    <li>Giá: <span>@Model.GiaMoi.Value.ToString("N0") đ</span></li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="sp-essential_stuff">
+                                <ul>
+                                    <li>Giá: <span>@Model.Gia.ToString("N0") đ</span></li>
+                                </ul>
+                            </div>
+                        }
+                        <div class="sp-description">
+                            @Html.Raw(Model.MoTa)
+                        </div>
+                        <div class="sp-description">
+                            Số lượng : @Html.Raw(Model.SoLuong)
+                        </div>
+                        <form action="@Url.Action("AddToCart", "Home")" method="post">
+                            <input type="hidden" name="productId" value="@Model.MaSanPham" />
+
+
+                            <div class="quantity">
+                                <label>Số lượng</label>
+                                <div class="cart-plus-minus">
+                                    <input class="cart-plus-minus-box" name="quantity" value="1" type="number" min="1">
+                                    <div class="dec qtybutton"><i class="fa fa-angle-down"></i></div>
+                                    <div class="inc qtybutton"><i class="fa fa-angle-up"></i></div>
+                                </div>
+                            </div>
+                            @if (Session["Username"] != null)
+                            {
+                                <div class="qty-btn_area">
+                                    <ul>
+                                        <li><a class="qty-cart_btn"><button type="submit">Thêm vào giỏ hàng</button></a></li>
+                                    </ul>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="qty-btn_area">
+                                    <ul>
+                                        <li><a href="@Url.Action("DangNhap","Home")" class="qty-cart_btn">Thêm vào giỏ hàng</a></li>
+                                    </ul>
+                                </div>
+                            }
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Hàm thay đổi hình ảnh chính
+    function changeImage(imageSrc) {
+        document.getElementById('mainImage').src = imageSrc;
+    }
+
+    // Lấy tất cả các hình ảnh thumbnail và gán sự kiện click
+    document.querySelectorAll('.thumbnail-image').forEach(function (img) {
+        img.addEventListener('click', function () {
+            changeImage(this.dataset.image);
+        });
+    });
+</script>
+
+
+
+
+
+<div class="uren-product_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title_area">
+                    <span></span>
+                    <h3>Sản phẩm cùng giá</h3>
+                </div>
+                <div class="product-slider uren-slick-slider slider-navigation_style-1 img-hover-effect_area" data-slick-options='{
+                    "slidesToShow": 6,
+                    "arrows" : true
+                }' data-slick-responsive='[
+                    {"breakpoint":1501, "settings": {"slidesToShow": 4}},
+                    {"breakpoint":1200, "settings": {"slidesToShow": 3}},
+                    {"breakpoint":992, "settings": {"slidesToShow": 2}},
+                    {"breakpoint":767, "settings": {"slidesToShow": 1}},
+                    {"breakpoint":480, "settings": {"slidesToShow": 1}}
+                ]'>
+                    @foreach (var sp in ViewBag.SanPhamCungGia)
+                    {
+                        <div class="product-slide_item">
+                            <div class="inner-slide">
+                                <div class="single-product">
+                                    <div class="product-img">
+                                        <a href="@Url.Action("ChiTietSanPham", "Home", new { id = sp.MaSanPham })">
+                                            <img class="primary-img" style="height:200px" src="@Url.Content($"~/assets/images/product/{sp.MaSanPham}/{sp.HinhAnh}")" alt="@sp.TenSanPham">
+                                            <img class="secondary-img" style="height:200px" src="@Url.Content($"~/assets/images/product/{sp.MaSanPham}/{sp.HinhAnh}")" alt="@sp.TenSanPham">
+                                        </a>
+                                        <div class="sticker">
+                                            <span class="sticker">New</span>
+                                        </div>
+                                        <div class="add-actions">
+                                            <ul>
+
+                                                <li class="quick-view-btn" data-toggle="modal" data-target="#exampleModalCenter">
+                                                    <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="Quick View">
+                                                        <i class="ion-android-open"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="product-content">
+                                        <div class="product-desc_info">
+                                            <h6><a class="product-name" href="@Url.Action("ChiTietSanPham", "Home", new { id = sp.MaSanPham })">@sp.TenSanPham</a></h6>
+                                            <div class="price-box">
+                                                <span class="new-price">@sp.Gia.ToString("N0") đ</span> <!-- Hiển thị giá -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

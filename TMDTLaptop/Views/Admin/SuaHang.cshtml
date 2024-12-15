@@ -1,0 +1,28 @@
+﻿@model TMDTLaptop.Models.HangSanPham
+
+@{
+    ViewBag.Title = "Sửa Hãng Sản Phẩm";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="mt-4">@ViewBag.Title</h2>
+
+            @using (Html.BeginForm("SuaHang", "Admin", FormMethod.Post))
+            {
+                @Html.HiddenFor(m => m.MaHang) <!-- Giữ lại Mã Hãng trong form -->
+
+                <div class="form-group">
+                    <label for="TenHang">Tên Hãng</label>
+                    @Html.TextBoxFor(m => m.TenHang, new { @class = "form-control", placeholder = "Nhập tên hãng" })
+                    @Html.ValidationMessageFor(m => m.TenHang, "", new { @class = "text-danger" })
+                </div>
+
+                <button type="submit" class="btn btn-success">Cập Nhật</button>
+                <a href="@Url.Action("QuanLyHang")" class="btn btn-secondary">Quay lại</a>
+            }
+        </div>
+    </div>
+</div>

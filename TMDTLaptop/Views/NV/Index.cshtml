@@ -1,0 +1,88 @@
+﻿@{
+    ViewBag.Title = "Doanh thu theo sản phẩm và danh mục";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4 title-highlight">Báo cáo doanh thu theo ngày</h2>
+    <div class="text-center mb-4">
+        <a href="@Url.Action("ExportToExcelBaoCao", "NV")" class="btn btn-success">
+            Xuất Excel
+        </a>
+    </div>
+
+    <h3 class="text-center mb-3">Doanh thu theo sản phẩm</h3>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Tên sản phẩm</th>
+                        <th>Doanh thu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in ViewBag.RevenueByProduct)
+                    {
+                        <tr>
+                            <td>@product.TenSanPham</td>
+                            <td>@String.Format("{0:N0} đ", product.DoanhThu)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <h3 class="text-center mb-3">Doanh thu theo danh mục</h3>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Tên danh mục</th>
+                        <th>Doanh thu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var category in ViewBag.RevenueByCategory)
+                    {
+                        <tr>
+                            <td>@category.TenDanhMuc</td>
+                            <td>@String.Format("{0:N0} đ", category.DoanhThu)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .title-highlight {
+        font-size: 2.5rem; /* Kích thước chữ lớn hơn */
+        font-weight: bold; /* Đậm */
+        color: #007bff; /* Màu xanh dương */
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Hiệu ứng đổ bóng */
+        margin-bottom: 1rem; /* Khoảng cách dưới tiêu đề */
+    }
+
+    .table {
+        border-radius: 8px; /* Bo góc bảng */
+        overflow: hidden;
+    }
+
+        .table th,
+        .table td {
+            vertical-align: middle;
+            text-align: center; /* Căn giữa nội dung bảng */
+        }
+
+    .table-hover tbody tr:hover {
+        background-color: #e9ecef; /* Thay đổi màu nền khi hover */
+    }
+</style>

@@ -1,0 +1,132 @@
+﻿
+<header class="header-main_area bg--sapphire">
+    <div class="header-top_area d-lg-block d-none">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-7 col-lg-8">
+                    <div class="main-menu_area position-relative">
+                        <nav class="main-nav">
+                            <ul>
+                                <li class="dropdown-holder active">
+                                    <a href="@Url.Action("Index","Home")">Trang chủ</a>
+
+                                </li>
+                                <li class="dropdown-holder">
+                                    <a href="#">Cửa hàng <i class="ion-ios-arrow-down"></i></a>
+                                    @Html.Action("GetDanhMuc", "Home")
+                                </li>
+
+
+                                <li class=""><a href="@Url.Action("About","Home")">Về chúng tôi</a></li>
+                                <li class=""><a href="@Url.Action("Contact","Home")">Liên hệ</a></li>
+
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="col-xl-5 col-lg-4">
+                    <div class="ht-right_area">
+                        <div class="ht-menu">
+                            <ul>
+                                @if (Session["Username"] != null)
+                                {
+                                    <li style="margin-right:50px">
+                                        <a href="#">Xin chào, @Session["Username"]<i class="fa fa-chevron-down"></i></a>
+                                        <ul class="ht-dropdown ht-my_account">
+
+                                            <li class="active"><a href="@Url.Action("HoSo", "Home")">Xem hồ sơ</a></li>
+                                            <li class="active"><a href="@Url.Action("Chat", "Home")">Chat với nhân viên</a></li>
+                                            <li class="active"><a href="@Url.Action("DangXuat", "Home")">Đăng xuất</a></li>
+                                        </ul>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li style="margin-right:50px">
+                                        <a href="#">Tài khoản<i class="fa fa-chevron-down"></i></a>
+                                        <ul class="ht-dropdown ht-my_account">
+                                            <li><a href="@Url.Action("DangKy", "Home")">Đăng ký</a></li>
+                                            <li class="active"><a href="@Url.Action("DangNhap", "Home")">Đăng nhập</a></li>
+                                        </ul>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-middle_area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="custom-logo_col col-12">
+                    <div class="header-logo_area">
+                        <a href="@Url.Action("Index","Home")" class="logo-text">
+                            CỬA HÀNG LAPTOP
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="custom-cart_col col-12">
+                    <div class="header-right_area">
+                        <ul>
+                            <li class="mobile-menu_wrap d-flex d-lg-none">
+                                <a href="#mobileMenu" class="mobile-menu_btn toolbar-btn color--white">
+                                    <i class="ion-navicon"></i>
+                                </a>
+                            </li>
+                            <li style="margin-left:300px" class="minicart-wrap">
+
+                                @if (Session["Username"] == null)
+                                {
+                                    // Nếu không có useremail trong session, hiển thị liên kết đến trang đăng nhập
+                                    <a href="@Url.Action("DangNhap", "Home")">
+                                        <div class="minicart-count_area">
+                                            <i class="ion-bag"></i>
+                                        </div>
+
+                                    </a>
+                                }
+                                else
+                                {
+                                    // Nếu có useremail trong session, hiển thị liên kết đến giỏ hàng
+                                    <a href="@Url.Action("GioHang", "Home")">
+                                        <div class="minicart-count_area">
+                                            <i class="ion-bag"></i>
+                                        </div>
+
+                                    </a>
+                                }
+
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</header>
+<script>
+    .logo-text {
+    font-family: 'Arial', sans-serif;
+    font-size: 28px;
+    font-weight: bold;
+    color: #ff0000; /* Màu chữ đỏ */
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.logo-text:hover {
+    transform: scale(1.1); /* Phóng to chữ khi hover */
+    color: #00ccff; /* Đổi màu sang xanh khi hover */
+}
+
+</script>

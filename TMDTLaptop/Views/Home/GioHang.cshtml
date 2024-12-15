@@ -1,0 +1,199 @@
+﻿
+@{
+    ViewBag.Title = "GioHang";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+    .breadcrumb-area {
+        background-image: url('@Url.Content("~/assets/images/banner/banner3.jpg")'); /* Đường dẫn tới hình ảnh */
+    }
+</style>
+@model List<TMDTLaptop.Models.ChiTietGioHang>
+<div class="breadcrumb-area">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>Giỏ hàng</h2>
+            <ul>
+                <li><a href="@Url.Action("Index","Home")">Trang chủ</a></li>
+                <li class="active">Giỏ hàng</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Uren's Breadcrumb Area End Here -->
+<div class="uren-cart-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <form action="javascript:void(0)">
+                    <div class="table-content table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="uren-product-remove">Xóa</th>
+                                    <th class="uren-product-thumbnail">Hình ảnh</th>
+                                    <th class="cart-product-name">Sản phẩm</th>
+                                    <th class="uren-product-price">Giá</th>
+                                    <th class="uren-product-quantity">Số lượng</th>
+                                    <th class="uren-product-subtotal">Tổng tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var item in Model)
+                                    {
+
+
+                                        <tr>
+                                            <td class="uren-product-remove">
+                                                <a href="@Url.Action("XoaGioHang",new {id = item.MaSanPham})">
+                                                    <i class="fa fa-trash" title="Remove"></i>
+                                                </a>
+                                            </td>
+                                            <td class="uren-product-thumbnail">
+                                                <a href="javascript:void(0)">
+                                                    <img style="width:60px" src="@Url.Content($"~/assets/images/product/{item.SanPham.MaSanPham}/{item.SanPham.HinhAnh}")" alt="@item.SanPham.TenSanPham">
+                                                </a>
+                                            </td>
+                                            <td class="uren-product-name">
+                                                <a href="javascript:void(0)">@item.SanPham.TenSanPham</a>
+                                            </td>
+                                            <td class="uren-product-price"><span class="amount">@String.Format("{0:N0}", item.Gia) đ</span></td>
+                                            <td class="quantity">
+                                                <label>Quantity</label>
+                                                <div class="cart-plus-minus">
+                                                    <input class="cart-plus-minus-box" value="@item.SoLuong" type="text" data-id="@item.MaSanPham">
+                                                    <div class="dec qtybutton"><i class="fa fa-angle-down"></i></div>
+                                                    <div class="inc qtybutton"><i class="fa fa-angle-up"></i></div>
+                                                </div>
+                                            </td>
+
+
+                                            <td class="product-subtotal">
+                                                <span class="amount">@String.Format("{0:N0}", item.Gia * item.SoLuong) đ</span>
+                                            </td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7">Giỏ hàng của bạn hiện tại đang trống.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="coupon-all">
+                        <div class="coupon">
+                            <input id="coupon_code" class="input-text" name="coupon_code" value="" placeholder="Coupon code" type="text">
+                            <button type="button" class="button" id="apply_coupon">Apply coupon</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5 ml-auto">
+                            <div class="cart-page-total">
+                                <h2>Thành tiền</h2>
+                                <ul>
+                                    <li>Tổng tiền <span>@String.Format("{0:N0}", ViewBag.TongTien) đ</span></li>
+                                </ul>
+                                <a href="@Url.Action("DatHangThanhCong", "Home")">Tiến hành đặt hàng</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Khi thay đổi số lượng từ input
+        $('.cart-plus-minus-box').on('change', function() {
+            updateCart($(this));
+        });
+
+        // Khi nhấn nút giảm số lượng
+        $('.dec').on('click', function() {
+            var input = $(this).siblings('.cart-plus-minus-box');
+            var currentValue = parseInt(input.val());
+            if (currentValue >= 1) { // Đảm bảo số lượng không giảm dưới 1
+
+                updateCart(input);
+            }
+        });
+
+        // Khi nhấn nút tăng số lượng
+        $('.inc').on('click', function() {
+            var input = $(this).siblings('.cart-plus-minus-box');
+            var currentValue = parseInt(input.val());
+
+            updateCart(input);
+        });
+
+        function updateCart(input) {
+            var quantity = input.val(); // Lấy số lượng mới
+            var productId = input.data('id'); // Lấy id sản phẩm
+
+            // Gửi Ajax đến action UpdateQuantity
+            $.ajax({
+                url: '@Url.Action("CapNhatGioHang", "Home")',
+                type: 'POST',
+                data: {
+                    productId: productId,
+                    quantity: quantity,
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message)
+                        location.reload(); // Tải lại trang để cập nhật giao diện
+                    } else {
+                        alert('Có lỗi xảy ra, vui lòng thử lại!');
+                    }
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra, vui lòng thử lại!');
+                }
+            });
+        }
+    });
+      $(document).ready(function () {
+        $('#apply_coupon').on('click', function () {
+            var couponCode = $('#coupon_code').val();
+
+            if (couponCode.trim() === "") {
+                alert("Vui lòng nhập mã giảm giá!");
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("ApplyCoupon", "Home")',  // Gọi action ApplyCoupon trong controller
+                type: 'POST',
+                data: {
+                    coupon: couponCode
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload();  // Tải lại trang để cập nhật tổng tiền sau khi áp dụng coupon
+                    } else {
+                        alert(response.message);  // Hiển thị thông báo lỗi nếu có
+                    }
+                },
+                error: function () {
+                    alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
+                }
+            });
+        });
+    });
+</script>
+

@@ -1,0 +1,92 @@
+﻿@model TMDTLaptop.Models.SanPham
+
+@{
+    ViewBag.Title = "Sửa Sản Phẩm";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container">
+    <h2 class="mt-4 mb-4">Sửa Sản Phẩm</h2>
+
+    @using (Html.BeginForm("SuaSanPham", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.MaSanPham)
+
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TenSanPham)
+                    @Html.TextBoxFor(model => model.TenSanPham, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.TenSanPham, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MoTa)
+                    @Html.TextAreaFor(model => model.MoTa, new { @class = "form-control", rows = 5, @id = "editor" })
+                    @Html.ValidationMessageFor(model => model.MoTa, "", new { @class = "text-danger" })
+                </div>
+
+                <script>
+                    CKEDITOR.replace('editor'); // Khởi tạo CKEditor cho trường MoTa
+                </script>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Gia)
+                    @Html.TextBoxFor(model => model.Gia, new { @class = "form-control", type = "number", step = "0.01" })
+                    @Html.ValidationMessageFor(model => model.Gia, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SoLuong, "Số Lượng")
+                    @Html.TextBoxFor(model => model.SoLuong, new { @class = "form-control", type = "number", min = "0" })
+                    @Html.ValidationMessageFor(model => model.SoLuong, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("Hình Ảnh Đại Diện")
+                    <input type="file" name="HinhDaiDien" class="form-control" />
+                    <img src="@Url.Content("~/assets/images/product/" + Model.MaSanPham + "/" + Model.HinhAnh)" alt="Hình Ảnh Đại Diện" style="width: 100px; height: auto;" />
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("Hình Kèm Theo")
+                    <input type="file" name="HinhKemTheo" class="form-control" multiple />
+                    <!-- Hiển thị hình kèm theo hiện tại -->
+                    @if (ViewBag.HinhKemTheo != null && ViewBag.HinhKemTheo.Count > 0)
+                    {
+                        foreach (var hinh in ViewBag.HinhKemTheo)
+                        {
+                            <img src="@Url.Content("~/assets/images/product/" + Model.MaSanPham + "/" + hinh)" alt="Hình Kèm Theo" style="width: 100px; height: auto;" />
+                        }
+                    }
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MaDanhMuc, "Danh Mục")
+                    @Html.DropDownListFor(
+                        model => model.MaDanhMuc,
+                        new SelectList(ViewBag.DanhMuc, "MaDanhMuc", "TenDanhMuc", Model.MaDanhMuc),
+                        "Chọn Danh Mục",
+                        new { @class = "form-control" }
+                    )
+                    @Html.ValidationMessageFor(model => model.MaDanhMuc, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MaHang, "Hãng Sản Phẩm")
+                    @Html.DropDownListFor(
+                        model => model.MaHang,
+                        new SelectList(ViewBag.Hang, "MaHang", "TenHang", Model.MaHang),
+                        "Chọn Hãng",
+                        new { @class = "form-control" }
+                    )
+                    @Html.ValidationMessageFor(model => model.MaHang, "", new { @class = "text-danger" })
+                </div>
+
+
+                <button type="submit" class="btn btn-primary">Cập Nhật Sản Phẩm</button>
+            </div>
+        </div>
+    }
+</div>

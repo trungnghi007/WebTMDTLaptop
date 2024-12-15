@@ -1,0 +1,198 @@
+﻿
+@{
+    ViewBag.Title = "HoSo";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+@model TMDTLaptop.Models.TaiKhoan
+<div class="breadcrumb-area">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>Hồ sơ</h2>
+            <ul>
+                <li><a href="@Url.Action("Index","Home")">Trang chủ</a></li>
+                <li class="active">Hồ sơ</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<style>
+    .breadcrumb-area {
+        background-image: url('@Url.Content("~/assets/images/banner/banner3.jpg")'); /* Đường dẫn tới hình ảnh */
+    }
+</style>
+@if (TempData["SuccessMessage"] != null)
+{
+    <script>
+        alert('@Html.Raw(TempData["SuccessMessage"])');
+    </script>
+}
+<main class="page-content">
+
+    <div class="account-page-area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3">
+                    <ul class="nav myaccount-tab-trigger" id="account-page-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="account-dashboard-tab" data-toggle="tab" href="#account-dashboard" role="tab" aria-controls="account-dashboard" aria-selected="true">Bảng điều khiển</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="account-orders-tab" data-toggle="tab" href="#account-orders" role="tab" aria-controls="account-orders" aria-selected="false">Đơn hàng</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="account-address-tab" data-toggle="tab" href="#account-address" role="tab" aria-controls="account-address" aria-selected="false">Địa chỉ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="account-details-tab" data-toggle="tab" href="#account-details" role="tab" aria-controls="account-details" aria-selected="false">Thông tin tài khoản</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="account-logout-tab" href="@Url.Action("DangXuat","Home")" role="tab" aria-selected="false">Đăng xuất</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-9">
+                    <div class="tab-content myaccount-tab-content" id="account-page-tab-content">
+                        <div class="tab-pane fade show active" id="account-dashboard" role="tabpanel" aria-labelledby="account-dashboard-tab">
+                            <div class="myaccount-dashboard">
+                                <p>
+                                    Xin chào <b>@Model.HoTen</b> (không phải @Model.HoTen? <a href="@Url.Action("DangXuat","Home")">Đăng xuất</a>)
+                                </p>
+                                <p>
+                                    Từ bảng điều khiển tài khoản của bạn, bạn có thể xem các đơn hàng gần đây, quản lý địa chỉ giao hàng và thanh toán, và <a href="javascript:void(0)">chỉnh sửa mật khẩu và thông tin tài khoản của bạn</a>.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="account-orders" role="tabpanel" aria-labelledby="account-orders-tab">
+                            <div class="myaccount-orders">
+                                <h4 class="small-title">ĐƠN HÀNG CỦA TÔI</h4>
+                                @if (ViewBag.Orders != null && ((List<TMDTLaptop.Models.DonHang>)ViewBag.Orders).Any())
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover">
+                                            <tbody>
+                                                <tr>
+                                                    <th>ĐƠN HÀNG</th>
+                                                    <th>NGÀY</th>
+                                                    <th>TRẠNG THÁI</th>
+                                                    <th>TỔNG</th>
+                                                    <th></th>
+                                                </tr>
+                                                @foreach (var order in ViewBag.Orders as List<TMDTLaptop.Models.DonHang>)
+                                                {
+                                                    <tr>
+                                                        <td><a class="account-order-id" href="@Url.Action("ChiTietDonHang", "Home", new { id = order.MaDonHang })">#@order.MaDonHang</a></td>
+                                                        <td>@order.NgayDatHang.Value.ToString("dd/MM/yyyy")</td>
+                                                        <td>@order.TrangThai</td>
+                                                        <td>@order.TongTien.Value.ToString("N0") đ</td>
+                                                        <td>
+                                                            <a href="@Url.Action("ChiTietDonHang", "Home", new { id = order.MaDonHang })" class="uren-btn uren-btn_dark uren-btn_sm"><span>Xem</span></a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p>Không có đơn hàng nào cả.</p>
+                                }
+                            </div>
+                        </div>
+
+
+                        <div class="tab-pane fade" id="account-address" role="tabpanel" aria-labelledby="account-address-tab">
+                            <div class="myaccount-address">
+                                <p>Các địa chỉ sau sẽ được sử dụng trên trang thanh toán theo mặc định.</p>
+                                <div class="row">
+                                    <div class="col">
+                                        <h4 class="small-title">ĐỊA CHỈ THANH TOÁN</h4>
+                                        <address>
+                                            @Model.DiaChi
+                                        </address>
+                                    </div>
+                                    <div class="col">
+                                        <h4 class="small-title">ĐỊA CHỈ GIAO HÀNG</h4>
+                                        <address>
+                                            @Model.DiaChi
+                                        </address>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="account-details" role="tabpanel" aria-labelledby="account-details-tab" onsubmit="return validateForm()">
+                            <div class="myaccount-details">
+                                <form action="@Url.Action("HoSo", "Home")" method="post" class="uren-form">
+
+                                    <div class="uren-form-inner">
+                                        <div class="single-input single-input-half">
+                                            <label for="account-details-firstname">Họ và Tên*</label>
+                                            <input type="text" id="account-details-firstname" name="tenKhachHang" value="@Model.HoTen">
+                                        </div>
+                                        <div class="single-input single-input-half">
+                                            <label for="account-details-lastname">Số điện thoại*</label>
+                                            <input type="text" id="account-details-lastname" name="soDienThoai" value="@Model.SoDienThoai">
+                                        </div>
+                                        <div class="single-input">
+                                            <label for="account-details-email">Địa chỉ*</label>
+                                            <input type="text" id="account-details-email" name="diaChi" value="@Model.DiaChi">
+                                        </div>
+                                        <div class="single-input">
+                                            <label for="account-details-oldpass">Mật khẩu hiện tại (để trống nếu không thay đổi)</label>
+                                            <input type="password" id="account-details-oldpass" name="matKhauHienTai">
+                                        </div>
+                                        <div class="single-input">
+                                            <label for="account-details-newpass">Mật khẩu mới (để trống nếu không thay đổi)</label>
+                                            <input type="password" id="account-details-newpass" name="matKhauMoi">
+                                        </div>
+                                        <div class="single-input">
+                                            <label for="account-details-confpass">Xác nhận mật khẩu mới</label>
+                                            <input type="password" id="account-details-confpass" name="xacNhanMatKhauMoi">
+                                        </div>
+                                        <div class="single-input">
+                                            <button class="uren-btn uren-btn_dark" type="submit">
+                                                <span>
+                                                    LƯU
+                                                    THAY ĐỔI
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    function validateForm() {
+
+        var tenKhachHang = document.getElementById("account-details-firstname").value.trim();
+        var soDienThoai = document.getElementById("account-details-lastname").value.trim();
+        var diaChi = document.getElementById("account-details-email").value.trim();
+        var matKhauHienTai = document.getElementById("account-details-oldpass").value.trim();
+        var matKhauMoi = document.getElementById("account-details-newpass").value.trim();
+        var xacNhanMatKhauMoi = document.getElementById("account-details-confpass").value.trim();
+
+
+        if (!tenKhachHang || !soDienThoai || !diaChi) {
+            alert("Vui lòng điền vào tất cả các trường bắt buộc!");
+            return false;
+        }
+
+        if (matKhauMoi !== "" && matKhauMoi !== xacNhanMatKhauMoi) {
+            alert("Mật khẩu xác nhận không khớp!");
+            return false;
+        }
+
+
+        return true;
+    }
+</script>
+
